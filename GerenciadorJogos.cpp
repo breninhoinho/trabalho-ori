@@ -82,9 +82,12 @@ int GerenciadorJogos::inserir(const std::string& titulo,
     copiarCampo(j.genero, genero, TAM_GENERO);
     copiarCampo(j.plataforma, plataforma, TAM_PLATAFORMA);
 
-    // 1) RRN do novo registro: append no fim do arquivo
-    int rrn = cab.totalSlots;
-    cab.totalSlots++;
+    // 1) Escolhe o RRN: reaproveita um buraco da LED ou cresce o arquivo
+    int rrn = led.desempilhar();          // estrategia LIFO
+    if (rrn == -1) {
+        rrn = cab.totalSlots;             // append no fim
+        cab.totalSlots++;
+    }
 
     // 2) Grava o registro no arquivo de dados
     escreverRegistro(rrn, j);
