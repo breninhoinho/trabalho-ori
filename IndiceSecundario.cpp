@@ -200,6 +200,45 @@ void IndiceSecundario::inserir(const std::string& chave, int idJogo) {
     escreverEntrada(pos, e);
 }
 
+// Remove o id da lista invertida da chave. Percorre a lista encadeada no .inv
+// desligando o no encontrado; o no liberado entra na lista de livres para ser
+// reaproveitado por insercoes futuras (mesma ideia da LED no arquivo de dados).
+void IndiceSecundario::remover(const std::string& chave, int idJogo) {
+    char ch[TAM_CHAVE_SEC];
+    copiarChave(ch, chave, TAM_CHAVE_SEC);
+
+    EntradaIdx e;
+    int pos = buscarEntrada(ch, e);
+    if (pos == -1) return;             // chave nao indexada: nada a fazer
+
+    int atual = e.cabeca;
+    int anterior = -1;
+    while (atual != -1) {
+        NoInv no;
+        lerNoInv(atual, no);
+        if (no.idJogo == idJogo) {
+            if (anterior == -1) {      // era a cabeca: entrada aponta p/ o proximo
+                e.cabeca = no.prox;
+                escreverEntrada(pos, e);
+            } else {                   // no do meio/fim: religa o anterior
+                NoInv ant;
+                lerNoInv(anterior, ant);
+                ant.prox = no.prox;
+                escreverNoInv(anterior, ant);
+            }
+            // devolve o no para a lista de livres do .inv
+            CabecalhoInv c = lerCabInv();
+            no.prox = c.livre;
+            escreverNoInv(atual, no);
+            c.livre = atual;
+            escreverCabInv(c);
+            return;
+        }
+        anterior = atual;
+        atual = no.prox;
+    }
+}
+
 std::vector<int> IndiceSecundario::buscar(const std::string& chave) {
     char ch[TAM_CHAVE_SEC];
     copiarChave(ch, chave, TAM_CHAVE_SEC);

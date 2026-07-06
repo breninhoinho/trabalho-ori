@@ -55,6 +55,10 @@ public:
     // CREATE do indice secundario: associa chave -> id
     void inserir(const std::string& chave, int idJogo);
 
+    // DELETE: desassocia chave -> id (remove o no da lista invertida;
+    // o no removido volta para a lista de livres do .inv).
+    void remover(const std::string& chave, int idJogo);
+
     // READ: retorna os ids associados a uma chave (busca binaria no .idx
     // via bsearch + percurso da lista invertida no .inv).
     std::vector<int> buscar(const std::string& chave);
