@@ -1,0 +1,12 @@
+# Binario e objetos de compilacao
+jogos
+*.o
+
+# Arquivos de dados gerados em tempo de execucao
+*.dat
+*.idx
+*.inv
+
+# Sistema operacional / editores
+.DS_Store
+.vscode/
