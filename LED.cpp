@@ -1,6 +1,7 @@
 #include "LED.h"
 
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -19,22 +20,36 @@ void LED::adicionar(int rrn) {
     arquivo.close();
 }
 
+// Estrategia LIFO: devolve o ULTIMO rrn gravado no led.dat e encolhe o
+// arquivo, descartando o espaco consumido.
 bool LED::obter(int &rrn) {
     ifstream arquivo(nomeArquivo, ios::binary);
 
     if (!arquivo.is_open())
         return false;
 
-    arquivo.seekg(0, ios::end);
-
-    if (arquivo.tellg() == 0) {
-        arquivo.close();
-        return false;
-    }
+    vector<int> rrns;
+    int valor;
+    while (arquivo.read(reinterpret_cast<char*>(&valor), sizeof(int)))
+        rrns.push_back(valor);
 
     arquivo.close();
 
-    return false;
+    if (rrns.empty())
+        return false;
+
+    rrn = rrns.back();   // o ultimo espaco liberado e o primeiro a ser reusado
+    rrns.pop_back();
+
+    // regrava o arquivo sem o rrn consumido
+    ofstream saida(nomeArquivo, ios::binary | ios::trunc);
+
+    if (!rrns.empty())
+        saida.write(reinterpret_cast<char*>(&rrns[0]), rrns.size() * sizeof(int));
+
+    saida.close();
+
+    return true;
 }
 
 bool LED::vazia() {

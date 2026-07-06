@@ -64,6 +64,15 @@ void GerenciadorJogos::escreverRegistro(int rrn, const Jogo& j) {
     fclose(f);
 }
 
+Jogo GerenciadorJogos::lerRegistro(int rrn) {
+    Jogo j;
+    FILE* f = abrirOuCriarDados(arqDados);
+    fseek(f, sizeof(CabecalhoDados) + (long)rrn * sizeof(Jogo), SEEK_SET);
+    fread(&j, sizeof(Jogo), 1, f);
+    fclose(f);
+    return j;
+}
+
 // ------------------------------- INSERIR -----------------------------------
 
 int GerenciadorJogos::inserir(const std::string& titulo,
@@ -82,10 +91,11 @@ int GerenciadorJogos::inserir(const std::string& titulo,
     copiarCampo(j.genero, genero, TAM_GENERO);
     copiarCampo(j.plataforma, plataforma, TAM_PLATAFORMA);
 
-    // 1) Escolhe o RRN: reaproveita um buraco da LED ou cresce o arquivo
-    int rrn = led.desempilhar();          // estrategia LIFO
-    if (rrn == -1) {
-        rrn = cab.totalSlots;             // append no fim
+    // 1) Escolhe o RRN: reaproveita um buraco da LED (estrategia LIFO) ou
+    //    cresce o arquivo
+    int rrn;
+    if (!led.obter(rrn)) {
+        rrn = cab.totalSlots;             // LED vazia: append no fim
         cab.totalSlots++;
     }
 
@@ -102,4 +112,33 @@ int GerenciadorJogos::inserir(const std::string& titulo,
     idxPlataforma.inserir(plataforma, j.id);
 
     return j.id;
+}
+
+// ------------------------------- REMOVER -----------------------------------
+
+// Remocao LOGICA: o registro nao e apagado fisicamente do jogos.dat; ele e
+// apenas marcado como removido (id = ID_REMOVIDO) e seu RRN e catalogado na
+// LED, que sera consultada pelo inserir para reaproveitar o espaco.
+bool GerenciadorJogos::remover(int id) {
+    // 1) Remove a chave do indice primario. A propria remocao da Arvore B ja
+    //    faz a busca e devolve o RRN que estava associado ao id.
+    int rrn;
+    if (!btree.remover(id, rrn))
+        return false;                     // id nao existe no indice
+
+    // 2) Le o registro para descobrir genero e plataforma (necessarios para
+    //    localizar as listas invertidas dos indices secundarios)
+    Jogo j = lerRegistro(rrn);
+
+    // 3) Remove o id das listas invertidas dos dois indices secundarios
+    idxGenero.remover(j.genero, id);
+    idxPlataforma.remover(j.plataforma, id);
+
+    // 4) Marca o registro como removido no arquivo de dados (remocao logica)
+    j.id = ID_REMOVIDO;
+    escreverRegistro(rrn, j);
+
+    // 5) Cataloga o espaco livre na LED para reuso por insercoes futuras
+    led.adicionar(rrn);
+    return true;
 }

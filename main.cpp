@@ -58,11 +58,23 @@ static void opInserir(GerenciadorJogos& g) {
     cout << ">> Jogo inserido com ID " << id << ".\n";
 }
 
+static void opRemover(GerenciadorJogos& g) {
+    cout << "\n--- Remover jogo ---\n";
+    int id = lerInt("ID do jogo a remover: ");
+
+    if (g.remover(id))
+        cout << ">> Jogo de ID " << id << " removido (remocao logica);"
+             << " espaco catalogado na LED.\n";
+    else
+        cout << ">> Jogo de ID " << id << " nao encontrado.\n";
+}
+
 // -------------------------------- menu -------------------------------------
 
 static void menu() {
     cout << "\n==================== SGBD de Jogos ====================\n";
     cout << " 1  - Inserir jogo\n";
+    cout << " 2  - Remover jogo\n";
     cout << " 0  - Sair\n";
     cout << "======================================================\n";
 }
@@ -75,6 +87,7 @@ int main() {
         int op = lerInt("Opcao: ");
         switch (op) {
             case 1:  opInserir(g);          break;
+            case 2:  opRemover(g);          break;
             case 0:  cout << "Encerrando.\n"; return 0;
             default: cout << "Opcao invalida.\n"; break;
         }

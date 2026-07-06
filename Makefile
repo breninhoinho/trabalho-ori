@@ -1,6 +1,6 @@
 CXX      = g++
 CXXFLAGS = -std=c++11 -O2 -Wall
-OBJS     = main.o GerenciadorJogos.o ArvoreB.o IndiceSecundario.o
+OBJS     = main.o GerenciadorJogos.o ArvoreB.o IndiceSecundario.o LED.o
 ALVO     = jogos
 
 $(ALVO): $(OBJS)
@@ -9,8 +9,11 @@ $(ALVO): $(OBJS)
 main.o: main.cpp GerenciadorJogos.h Registro.h
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
-GerenciadorJogos.o: GerenciadorJogos.cpp GerenciadorJogos.h Registro.h ArvoreB.h IndiceSecundario.h
+GerenciadorJogos.o: GerenciadorJogos.cpp GerenciadorJogos.h Registro.h ArvoreB.h IndiceSecundario.h LED.h
 	$(CXX) $(CXXFLAGS) -c GerenciadorJogos.cpp
+
+LED.o: LED.cpp LED.h
+	$(CXX) $(CXXFLAGS) -c LED.cpp
 
 ArvoreB.o: ArvoreB.cpp ArvoreB.h
 	$(CXX) $(CXXFLAGS) -c ArvoreB.cpp
