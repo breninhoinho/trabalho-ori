@@ -42,12 +42,26 @@ private:
     void dividirFilho(int paiIdx, NoBTree& pai, int i);
     void inserirNaoCheio(int idx, int chave, int rrn);
 
+    // --- operacoes internas de remocao ---
+    void liberarNo(int idx);          // devolve o no para a lista de livres
+    void removerDe(int idx, int chave, int& rrnRemovido, bool& achou);
+    void removerDeInterno(int idx, NoBTree& x, int i);
+    void maiorDaSubarvore(int idx, int& chave, int& rrn);  // predecessora
+    void menorDaSubarvore(int idx, int& chave, int& rrn);  // sucessora
+    void preencherFilho(int idx, int i);   // garante que o filho i tenha >= T chaves
+    void emprestarDoAnterior(int idx, int i);
+    void emprestarDoProximo(int idx, int i);
+    void fundirFilhos(int idx, int i);     // funde filhos i e i+1 em torno da chave i
+
 public:
     explicit ArvoreB(const char* nome);
 
     // CRUD do indice primario:
     void inserir(int chave, int rrn);  // CREATE: associa id -> rrn
 
+    // DELETE: remove a chave da arvore. Retorna true se a chave existia e
+    // devolve em 'rrnRemovido' o RRN que estava associado a ela.
+    bool remover(int chave, int& rrnRemovido);
 };
 
 #endif // ARVOREB_H
