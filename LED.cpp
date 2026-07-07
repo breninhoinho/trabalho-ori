@@ -20,8 +20,6 @@ void LED::adicionar(int rrn) {
     arquivo.close();
 }
 
-// Estrategia LIFO: devolve o ULTIMO rrn gravado no led.dat e encolhe o
-// arquivo, descartando o espaco consumido.
 bool LED::obter(int &rrn) {
     ifstream arquivo(nomeArquivo, ios::binary);
 
@@ -30,6 +28,7 @@ bool LED::obter(int &rrn) {
 
     vector<int> rrns;
     int valor;
+
     while (arquivo.read(reinterpret_cast<char*>(&valor), sizeof(int)))
         rrns.push_back(valor);
 
@@ -38,10 +37,11 @@ bool LED::obter(int &rrn) {
     if (rrns.empty())
         return false;
 
-    rrn = rrns.back();   // o ultimo espaco liberado e o primeiro a ser reusado
+    // Reutiliza o último RRN liberado (LIFO)
+    rrn = rrns.back();
     rrns.pop_back();
 
-    // regrava o arquivo sem o rrn consumido
+    // Atualiza a LED removendo o RRN utilizado
     ofstream saida(nomeArquivo, ios::binary | ios::trunc);
 
     if (!rrns.empty())
