@@ -142,3 +142,19 @@ bool GerenciadorJogos::remover(int id) {
     led.adicionar(rrn);
     return true;
 }
+
+// Buscar
+
+bool GerenciadorJogos::buscarPorId(int id, Jogo& saida) {
+    int rrn = btree.buscar(id);
+    if (rrn == -1) 
+        return false;
+
+    saida = lerRegistro(rrn);
+
+    // Validação caso o registro já tenha sido removido (Tombstone)
+    if (saida.id == ID_REMOVIDO) 
+        return false;
+    
+    return true;
+}

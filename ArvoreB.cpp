@@ -448,3 +448,28 @@ void ArvoreB::fundirFilhos(int idx, int i) {
     liberarNo(irmaoIdx);
 }
 
+// BUSCAR
+
+// Retorna o RNN ou -1, caso não exista
+int ArvoreB::buscar(int chave) {
+    CabecalhoBTree c = lerCabecalho();
+
+    int idx = c.raiz;
+    while (idx != -1) {
+        NoBTree x;
+        lerNo(idx, x);
+
+        int i = 0;
+        while (i < x.n && chave > x.chaves[i]) 
+            i++;
+        
+        if (i < x.n && x.chaves[i] == chave)
+            return x.dados[i];
+
+        if (x.folha) 
+            return -1;
+
+        idx = x.filhos[i];
+    }
+    return -1;
+}

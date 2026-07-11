@@ -28,6 +28,8 @@ public:
                 int ano, float nota, const std::string& genero,
                 const std::string& plataforma);
 
+    bool buscarPorId(int id, Jogo& saida);
+
     // DELETE principal: remocao LOGICA do jogo pelo id.
     // Remove o id da Arvore B e das listas invertidas, marca o registro como
     // removido em jogos.dat e cataloga o espaco na LED. Retorna false se o id

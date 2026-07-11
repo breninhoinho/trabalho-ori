@@ -43,6 +43,14 @@ static string lerLinha(const string& prompt) {
     return s;
 }
 
+// Print Dados
+
+static void imprimirJogo(const Jogo& j) {
+    printf("  %-4s | %-30s | %-18s | %-4s | %-8s | %-20s\n", "ID", "Titulo", "Desenvolvedora", "Ano", "Nota", "Genero / Plataforma");
+    printf("  %-4d | %-30s | %-18s | %-4d | %-8.1f | %s / %s\n", j.id, j.titulo, j.desenvolvedora, j.anoLancamento, j.notaMedia, j.genero, j.plataforma);
+}
+
+
 // ------------------------------ operacoes ----------------------------------
 
 static void opInserir(GerenciadorJogos& g) {
@@ -69,12 +77,21 @@ static void opRemover(GerenciadorJogos& g) {
         cout << ">> Jogo de ID " << id << " nao encontrado.\n";
 }
 
+static void opBuscarId(GerenciadorJogos& g) {
+    int id = lerInt("\nID a buscar: ");
+    Jogo j;
+    if (g.buscarPorId(id, j)) { cout << "Encontrado:\n"; imprimirJogo(j); }
+    else cout << ">> Nenhum jogo ativo com ID " << id << ".\n";
+}
+
+
 // -------------------------------- menu -------------------------------------
 
 static void menu() {
     cout << "\n==================== SGBD de Jogos ====================\n";
     cout << " 1  - Inserir jogo\n";
-    cout << " 2  - Remover jogo\n";
+    cout << " 2  - Buscar por ID\n";
+    cout << " 3  - Remover jogo\n";
     cout << " 0  - Sair\n";
     cout << "======================================================\n";
 }
@@ -84,12 +101,23 @@ int main() {
 
     while (true) {
         menu();
-        int op = lerInt("Opcao: ");
+        int op = lerInt("Opcoes: ");
         switch (op) {
-            case 1:  opInserir(g);          break;
-            case 2:  opRemover(g);          break;
-            case 0:  cout << "Encerrando.\n"; return 0;
-            default: cout << "Opcao invalida.\n"; break;
+            case 1:  
+                opInserir(g);
+                break;
+            case 2:
+                opBuscarId(g);
+                break;
+            case 3:  
+                opRemover(g);
+                break;
+            case 0:  
+                cout << "Encerrando.\n"; 
+                return 0;
+            default: 
+                cout << "Opcao invalida.\n"; 
+                break;
         }
     }
     return 0;
