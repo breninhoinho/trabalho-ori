@@ -50,6 +50,11 @@ static void imprimirJogo(const Jogo& j) {
     printf("  %-4d | %-30s | %-18s | %-4d | %-8.1f | %s / %s\n", j.id, j.titulo, j.desenvolvedora, j.anoLancamento, j.notaMedia, j.genero, j.plataforma);
 }
 
+static void imprimirLista(const vector<Jogo>& v) {
+    if (v.empty()) { cout << "  (nenhum registro encontrado)\n"; return; }
+    for (size_t i = 0; i < v.size(); i++) imprimirJogo(v[i]);
+    cout << "  Total: " << v.size() << " registro(s).\n";
+}
 
 // ------------------------------ operacoes ----------------------------------
 
@@ -84,6 +89,24 @@ static void opBuscarId(GerenciadorJogos& g) {
     else cout << ">> Nenhum jogo ativo com ID " << id << ".\n";
 }
 
+static void opBuscarGenero(GerenciadorJogos& g) {
+    vector<string> chaves = g.generosIndexados();
+    cout << "\nGeneros indexados: ";
+    for (size_t i = 0; i < chaves.size(); i++) cout << chaves[i] << (i+1<chaves.size()?", ":"");
+    cout << "\n";
+    string gen = lerLinha("Genero a buscar: ");
+    imprimirLista(g.buscarPorGenero(gen));
+}
+
+static void opBuscarPlataforma(GerenciadorJogos& g) {
+    vector<string> chaves = g.plataformasIndexadas();
+    cout << "\nPlataformas indexadas: ";
+    for (size_t i = 0; i < chaves.size(); i++) cout << chaves[i] << (i+1<chaves.size()?", ":"");
+    cout << "\n";
+    string p = lerLinha("Plataforma a buscar: ");
+    imprimirLista(g.buscarPorPlataforma(p));
+}
+
 
 // -------------------------------- menu -------------------------------------
 
@@ -92,6 +115,8 @@ static void menu() {
     cout << " 1  - Inserir jogo\n";
     cout << " 2  - Buscar por ID\n";
     cout << " 3  - Remover jogo\n";
+    cout << " 4  - Buscar por Genero\n";
+    cout << " 5  - Buscar por Plataforma\n";
     cout << " 0  - Sair\n";
     cout << "======================================================\n";
 }
@@ -111,6 +136,12 @@ int main() {
                 break;
             case 3:  
                 opRemover(g);
+                break;
+            case 4:
+                opBuscarGenero(g);
+                break;
+            case 5:
+                opBuscarPlataforma(g);
                 break;
             case 0:  
                 cout << "Encerrando.\n"; 

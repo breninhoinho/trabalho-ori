@@ -28,6 +28,7 @@ public:
                 int ano, float nota, const std::string& genero,
                 const std::string& plataforma);
 
+    // Search
     bool buscarPorId(int id, Jogo& saida);
 
     // DELETE principal: remocao LOGICA do jogo pelo id.
@@ -35,6 +36,14 @@ public:
     // removido em jogos.dat e cataloga o espaco na LED. Retorna false se o id
     // nao existe.
     bool remover(int id);
+
+    // Buscas por chave secundaria (lista invertida)
+    std::vector<Jogo> buscarPorGenero(const std::string& genero);
+    std::vector<Jogo> buscarPorPlataforma(const std::string& plataforma);
+
+    //List
+    std::vector<std::string> generosIndexados();
+    std::vector<std::string> plataformasIndexadas();
 };
 
 #endif // GERENCIADOR_JOGOS_H

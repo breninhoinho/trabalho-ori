@@ -75,7 +75,7 @@ make clean    # remove binario, objetos e arquivos de dados
 ## Funcionalidades do menu
 
 - [x] Inserir jogo (com reaproveitamento de espaço via LED)
-- [x] Remover jogo (remoção lógica + atualização de todos os índices)
-- [ ] Buscar jogo por id (Árvore B) — em desenvolvimento
-- [ ] Buscar jogos por gênero / plataforma (listas invertidas) — em desenvolvimento
+- [x] Remover jogo (remoção lógica + atualização de todos os índices) 
+- [X] Buscar jogo por id (Árvore B)
+- [X] Buscar jogos por gênero / plataforma (listas invertidas)
 - [ ] Atualizar jogo — em desenvolvimento

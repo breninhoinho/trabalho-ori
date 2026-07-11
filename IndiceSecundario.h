@@ -62,6 +62,9 @@ public:
     // READ: retorna os ids associados a uma chave (busca binaria no .idx
     // via bsearch + percurso da lista invertida no .inv).
     std::vector<int> buscar(const std::string& chave);
+
+    // Listar todas as chaves
+    std::vector<std::string> listarChaves();
 };
 
 #endif // INDICE_SECUNDARIO_H

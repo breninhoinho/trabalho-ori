@@ -158,3 +158,37 @@ bool GerenciadorJogos::buscarPorId(int id, Jogo& saida) {
     
     return true;
 }
+
+// Buscar por Chave Secundária (Lista Invertida)
+
+std::vector<Jogo> GerenciadorJogos::buscarPorGenero(const std::string& genero) {
+    std::vector<Jogo> resultado;
+    std::vector<int> ids = idxGenero.buscar(genero);
+    for (size_t i = 0; i < ids.size(); i++) {
+        Jogo j;
+        if (buscarPorId(ids[i], j))
+            resultado.push_back(j);
+    }
+    return resultado;
+}
+
+std::vector<Jogo> GerenciadorJogos::buscarPorPlataforma(const std::string& plataforma) {
+    std::vector<Jogo> resultado;
+    std::vector<int> ids = idxPlataforma.buscar(plataforma);
+    for (size_t i = 0; i < ids.size(); i++) {
+        Jogo j;
+        if (buscarPorId(ids[i], j))
+            resultado.push_back(j);
+    }
+    return resultado;
+}
+
+// Listagem
+
+std::vector<std::string> GerenciadorJogos::generosIndexados() {
+    return idxGenero.listarChaves();
+}
+
+std::vector<std::string> GerenciadorJogos::plataformasIndexadas() {
+    return idxPlataforma.listarChaves();
+}

@@ -256,3 +256,21 @@ std::vector<int> IndiceSecundario::buscar(const std::string& chave) {
     }
     return ids;
 }
+
+// Listar as Chaves Secundárias
+std::vector<std::string> IndiceSecundario::listarChaves() {
+    std::vector<std::string> chaves;
+    CabecalhoIdx c = lerCabIdx();
+
+    FILE* f = abrirOuCriarIdx(arqIdx);
+    fseek(f, sizeof(CabecalhoIdx), SEEK_SET);
+
+    for (int i = 0; i < c.numEntradas; i++) {
+        EntradaIdx e;
+        fread(&e, sizeof(EntradaIdx), 1, f);
+        if (e.cabeca != -1)
+            chaves.push_back(std::string(e.chave));
+    }
+    fclose(f);
+    return chaves;
+}
