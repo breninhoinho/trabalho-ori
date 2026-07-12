@@ -28,8 +28,11 @@ public:
                 int ano, float nota, const std::string& genero,
                 const std::string& plataforma);
 
-    // Search
+    // Buscar pelo id
     bool buscarPorId(int id, Jogo& saida);
+
+    // Atualizar pelo id.
+    bool atualizar(int id, const std::string& titulo, const std::string& desenvolvedora, int ano, float nota, const std::string& genero, const std::string& plataforma);
 
     // DELETE principal: remocao LOGICA do jogo pelo id.
     // Remove o id da Arvore B e das listas invertidas, marca o registro como

@@ -107,6 +107,29 @@ static void opBuscarPlataforma(GerenciadorJogos& g) {
     imprimirLista(g.buscarPorPlataforma(p));
 }
 
+static void opAtualizar(GerenciadorJogos& g) {
+    int id = lerInt("\nID a atualizar: ");
+    Jogo j;
+    if (!g.buscarPorId(id, j)) {
+        cout << ">> Nenhum jogo ativo com ID " << id << ".\n";
+        return;
+    }
+    cout << "Registro atual:\n"; imprimirJogo(j);
+    cout << "(a chave primaria/ID NAO pode ser alterada)\n";
+
+    string titulo = lerLinha("Novo titulo: ");
+    string desenv = lerLinha("Nova desenvolvedora: ");
+    int    ano    = lerInt("Novo ano: ");
+    float  nota   = lerFloat("Nova nota media: ");
+    string genero = lerLinha("Novo genero: ");
+    string plat   = lerLinha("Nova plataforma: ");
+
+    if (g.atualizar(id, titulo, desenv, ano, nota, genero, plat))
+        cout << ">> Registro atualizado.\n";
+    else
+        cout << ">> Falha ao atualizar.\n";
+}
+
 
 // -------------------------------- menu -------------------------------------
 
@@ -114,9 +137,10 @@ static void menu() {
     cout << "\n==================== SGBD de Jogos ====================\n";
     cout << " 1  - Inserir jogo\n";
     cout << " 2  - Buscar por ID\n";
-    cout << " 3  - Remover jogo\n";
-    cout << " 4  - Buscar por Genero\n";
-    cout << " 5  - Buscar por Plataforma\n";
+    cout << " 3  - Atualizar Jogo\n";
+    cout << " 4  - Remover jogo\n";
+    cout << " 5  - Buscar por Genero\n";
+    cout << " 6  - Buscar por Plataforma\n";
     cout << " 0  - Sair\n";
     cout << "======================================================\n";
 }
@@ -134,13 +158,16 @@ int main() {
             case 2:
                 opBuscarId(g);
                 break;
-            case 3:  
+            case 3:
+                opAtualizar(g);
+                break;
+            case 4:  
                 opRemover(g);
                 break;
-            case 4:
+            case 5:
                 opBuscarGenero(g);
                 break;
-            case 5:
+            case 6:
                 opBuscarPlataforma(g);
                 break;
             case 0:  

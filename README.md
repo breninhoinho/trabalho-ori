@@ -78,4 +78,4 @@ make clean    # remove binario, objetos e arquivos de dados
 - [x] Remover jogo (remoção lógica + atualização de todos os índices) 
 - [X] Buscar jogo por id (Árvore B)
 - [X] Buscar jogos por gênero / plataforma (listas invertidas)
-- [ ] Atualizar jogo — em desenvolvimento
+- [X] Atualizar jogo — em desenvolvimento

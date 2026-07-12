@@ -192,3 +192,38 @@ std::vector<std::string> GerenciadorJogos::generosIndexados() {
 std::vector<std::string> GerenciadorJogos::plataformasIndexadas() {
     return idxPlataforma.listarChaves();
 }
+
+// Atualizar
+
+bool GerenciadorJogos::atualizar(int id, const std::string& titulo, const std::string& desenvolvedora, int ano, float nota, const std::string& genero, const std::string& plataforma) {
+    int rrn = btree.buscar(id);
+    if (rrn == -1) 
+        return false;
+
+    Jogo antigo = lerRegistro(rrn);
+    if (antigo.id == ID_REMOVIDO) 
+        return false;
+
+    // Se a chave secundaria mudou, mantem os indices consistentes:
+    if (strncmp(antigo.genero, genero.c_str(), TAM_GENERO) != 0) {
+        idxGenero.remover(std::string(antigo.genero), id);
+        idxGenero.inserir(genero, id);
+    }
+    if (strncmp(antigo.plataforma, plataforma.c_str(), TAM_PLATAFORMA) != 0) {
+        idxPlataforma.remover(std::string(antigo.plataforma), id);
+        idxPlataforma.inserir(plataforma, id);
+    }
+
+    Jogo novo;
+    memset(&novo, 0, sizeof(Jogo));
+    novo.id = id;
+    copiarCampo(novo.titulo, titulo, TAM_TITULO);
+    copiarCampo(novo.desenvolvedora, desenvolvedora, TAM_DESENV);
+    novo.anoLancamento = ano;
+    novo.notaMedia = nota;
+    copiarCampo(novo.genero, genero, TAM_GENERO);
+    copiarCampo(novo.plataforma, plataforma, TAM_PLATAFORMA);
+
+    escreverRegistro(rrn, novo);
+    return true;
+}

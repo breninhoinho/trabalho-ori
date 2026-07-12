@@ -59,6 +59,7 @@ public:
     // CRUD do indice primario:
     void inserir(int chave, int rrn);  // CREATE: associa id -> rrn
     int  buscar(int chave);
+    bool atualizar(int chave, int rrn);
 
     // DELETE: remove a chave da arvore. Retorna true se a chave existia e
     // devolve em 'rrnRemovido' o RRN que estava associado a ela.
