@@ -47,6 +47,9 @@ public:
     // Listagem por chave secundária
     std::vector<std::string> generosIndexados();
     std::vector<std::string> plataformasIndexadas();
+
+    // Listar Todos
+    std::vector<Jogo> listarTodos();
 };
 
 #endif // GERENCIADOR_JOGOS_H

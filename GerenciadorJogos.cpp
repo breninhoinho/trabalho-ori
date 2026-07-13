@@ -145,15 +145,17 @@ bool GerenciadorJogos::remover(int id) {
 // BUSCAR
 
 bool GerenciadorJogos::buscarPorId(int id, Jogo& saida) {
+    // Busca o RRN correspondente ao ID utilizando a Arvore B.
     int rrn = btree.buscar(id);
     if (rrn == -1) 
         return false;
 
+    // Le o registro encontrado.
     saida = lerRegistro(rrn);
 
     // Validação caso o registro já tenha sido removido (Tombstone)
     if (saida.id == ID_REMOVIDO) 
-        return false;
+        return false;https://www.youtube.com/watch?v=vmqvPlJvpj4&t=1552s
     
     return true;
 }
@@ -183,6 +185,17 @@ std::vector<Jogo> GerenciadorJogos::buscarPorPlataforma(const std::string& plata
 }
 
 // LISTAR
+
+std::vector<Jogo> GerenciadorJogos::listarTodos() {
+    std::vector<Jogo> v;
+    CabecalhoDados cab = lerCabecalho();
+    for (int rrn = 0; rrn < cab.totalSlots; rrn++) {
+        Jogo j = lerRegistro(rrn);
+        if (j.id != ID_REMOVIDO)
+            v.push_back(j);
+    }
+    return v;
+}
 
 std::vector<std::string> GerenciadorJogos::generosIndexados() {
     return idxGenero.listarChaves();

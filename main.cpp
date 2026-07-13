@@ -15,7 +15,10 @@ static int lerInt(const string& prompt) {
     int x;
     while (true) {
         cout << prompt;
-        if (cin >> x) { limparBuffer(); return x; }
+        if (cin >> x) { 
+            limparBuffer();
+            return x;
+        }
         cout << "  Valor invalido, tente novamente.\n";
         limparBuffer();
     }
@@ -25,7 +28,10 @@ static float lerFloat(const string& prompt) {
     float x;
     while (true) {
         cout << prompt;
-        if (cin >> x) { limparBuffer(); return x; }
+        if (cin >> x) { 
+            limparBuffer();
+            return x;
+        }
         cout << "  Valor invalido, tente novamente.\n";
         limparBuffer();
     }
@@ -41,13 +47,23 @@ static string lerLinha(const string& prompt) {
 // Print Dados
 
 static void imprimirJogo(const Jogo& j) {
-    printf("  %-4s | %-30s | %-18s | %-4s | %-8s | %-20s\n", "ID", "Titulo", "Desenvolvedora", "Ano", "Nota", "Genero / Plataforma");
     printf("  %-4d | %-30s | %-18s | %-4d | %-8.1f | %s / %s\n", j.id, j.titulo, j.desenvolvedora, j.anoLancamento, j.notaMedia, j.genero, j.plataforma);
 }
 
+static void imprimirCabecalho() {
+    printf("  %-4s | %-30s | %-18s | %-4s | %-8s | %-20s\n", "ID", "Titulo", "Desenvolvedora", "Ano", "Nota", "Genero / Plataforma");
+}
+
 static void imprimirLista(const vector<Jogo>& v) {
-    if (v.empty()) { cout << "  (nenhum registro encontrado)\n"; return; }
-    for (size_t i = 0; i < v.size(); i++) imprimirJogo(v[i]);
+    if (v.empty()) {
+        cout << "  (nenhum registro encontrado)\n";
+        return;
+    }
+
+    imprimirCabecalho();
+    for (size_t i = 0; i < v.size(); i++)
+        imprimirJogo(v[i]);
+
     cout << "  Total: " << v.size() << " registro(s).\n";
 }
 
@@ -80,14 +96,21 @@ static void opRemover(GerenciadorJogos& g) {
 static void opBuscarId(GerenciadorJogos& g) {
     int id = lerInt("\nID a buscar: ");
     Jogo j;
-    if (g.buscarPorId(id, j)) { cout << "Encontrado:\n"; imprimirJogo(j); }
-    else cout << ">> Nenhum jogo ativo com ID " << id << ".\n";
+    if (g.buscarPorId(id, j)) {
+        cout << "Encontrado:\n";
+        imprimirCabecalho(); 
+        imprimirJogo(j); 
+    }
+    else 
+        cout << ">> Nenhum jogo ativo com ID " << id << ".\n";
 }
 
 static void opBuscarGenero(GerenciadorJogos& g) {
     vector<string> chaves = g.generosIndexados();
     cout << "\nGeneros indexados: ";
-    for (size_t i = 0; i < chaves.size(); i++) cout << chaves[i] << (i+1<chaves.size()?", ":"");
+    for (size_t i = 0; i < chaves.size(); i++) 
+        cout << chaves[i] << (i+1<chaves.size()?", ":"");
+
     cout << "\n";
     string gen = lerLinha("Genero a buscar: ");
     imprimirLista(g.buscarPorGenero(gen));
@@ -96,7 +119,9 @@ static void opBuscarGenero(GerenciadorJogos& g) {
 static void opBuscarPlataforma(GerenciadorJogos& g) {
     vector<string> chaves = g.plataformasIndexadas();
     cout << "\nPlataformas indexadas: ";
-    for (size_t i = 0; i < chaves.size(); i++) cout << chaves[i] << (i+1<chaves.size()?", ":"");
+    for (size_t i = 0; i < chaves.size(); i++) 
+        cout << chaves[i] << (i+1<chaves.size()?", ":"");
+
     cout << "\n";
     string p = lerLinha("Plataforma a buscar: ");
     imprimirLista(g.buscarPorPlataforma(p));
@@ -125,6 +150,11 @@ static void opAtualizar(GerenciadorJogos& g) {
         cout << ">> Falha ao atualizar.\n";
 }
 
+static void opListarTodos(GerenciadorJogos& g) {
+    cout << "\n--- Todos os jogos (varredura do arquivo, pulando removidos) ---\n";
+    imprimirLista(g.listarTodos());
+}
+
 
 // Menu
 
@@ -136,6 +166,7 @@ static void menu() {
     cout << " 4  - Remover jogo\n";
     cout << " 5  - Buscar por Genero\n";
     cout << " 6  - Buscar por Plataforma\n";
+    cout << " 7  - Listar Todos\n";
     cout << " 0  - Sair\n";
     cout << "======================================================\n";
 }
@@ -164,6 +195,9 @@ int main() {
                 break;
             case 6:
                 opBuscarPlataforma(g);
+                break;
+            case 7:
+                opListarTodos(g);
                 break;
             case 0:  
                 cout << "Encerrando.\n"; 
