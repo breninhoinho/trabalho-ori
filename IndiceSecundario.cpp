@@ -1,6 +1,6 @@
 #include "IndiceSecundario.h"
 #include <cstring>
-#include <cstdlib>   // bsearch
+#include <cstdlib>
 
 // Comparador usado por bsearch: compara duas entradas pela chave.
 static int cmpEntrada(const void* a, const void* b) {
@@ -44,7 +44,7 @@ IndiceSecundario::IndiceSecundario(const char* nomeIdx, const char* nomeInv) {
     FILE* b = abrirOuCriarInv(arqInv); fclose(b);
 }
 
-// ------------------------------- .idx --------------------------------------
+// .IDX
 
 CabecalhoIdx IndiceSecundario::lerCabIdx() {
     FILE* f = abrirOuCriarIdx(arqIdx);
@@ -84,7 +84,7 @@ int IndiceSecundario::buscarEntrada(const char* chave, EntradaIdx& saida) {
 
     if (!achado) return -1;
     saida = *achado;
-    return (int)(achado - &entradas[0]);   // posicao == RRN no .idx
+    return (int)(achado - &entradas[0]);
 }
 
 void IndiceSecundario::escreverEntrada(int pos, const EntradaIdx& e) {
@@ -110,7 +110,7 @@ int IndiceSecundario::criarEntrada(const char* chave) {
     EntradaIdx nova;
     memset(&nova, 0, sizeof(EntradaIdx));
     memcpy(nova.chave, chave, TAM_CHAVE_SEC);
-    nova.cabeca = -1;              // lista invertida ainda vazia
+    nova.cabeca = -1;
 
     // localiza a posicao de insercao que mantem a ordem crescente das chaves
     int pos = 0;
@@ -130,7 +130,7 @@ int IndiceSecundario::criarEntrada(const char* chave) {
     return pos;
 }
 
-// ------------------------------- .inv --------------------------------------
+// .INV
 
 CabecalhoInv IndiceSecundario::lerCabInv() {
     FILE* f = abrirOuCriarInv(arqInv);
@@ -164,7 +164,7 @@ void IndiceSecundario::escreverNoInv(int idx, const NoInv& no) {
 int IndiceSecundario::alocarNoInv() {
     CabecalhoInv c = lerCabInv();
     int idx;
-    if (c.livre != -1) {           // reaproveita no livre
+    if (c.livre != -1) {
         idx = c.livre;
         NoInv no; lerNoInv(idx, no);
         c.livre = no.prox;
@@ -176,7 +176,7 @@ int IndiceSecundario::alocarNoInv() {
     return idx;
 }
 
-// ------------------------------ CRUD ---------------------------------------
+// CRUD
 
 // Insere o id na lista invertida da chave (insercao no inicio da lista).
 void IndiceSecundario::inserir(const std::string& chave, int idJogo) {
@@ -245,8 +245,8 @@ std::vector<int> IndiceSecundario::buscar(const std::string& chave) {
 
     std::vector<int> ids;
     EntradaIdx e;
-    int pos = buscarEntrada(ch, e);    // <- busca binaria via bsearch
-    if (pos == -1) return ids;         // chave nao indexada
+    int pos = buscarEntrada(ch, e);
+    if (pos == -1) return ids;
 
     int atual = e.cabeca;
     while (atual != -1) {
@@ -257,7 +257,7 @@ std::vector<int> IndiceSecundario::buscar(const std::string& chave) {
     return ids;
 }
 
-// Listar as Chaves Secundárias
+// Lista as Chaves Secundárias
 std::vector<std::string> IndiceSecundario::listarChaves() {
     std::vector<std::string> chaves;
     CabecalhoIdx c = lerCabIdx();

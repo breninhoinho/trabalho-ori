@@ -1,8 +1,3 @@
-
-//  Compilar:
-//    g++ -std=c++11 -O2 -o jogos main.cpp GerenciadorJogos.cpp ArvoreB.cpp IndiceSecundario.cpp
-// ===========================================================================
-
 #include "GerenciadorJogos.h"
 #include <iostream>
 #include <string>
@@ -56,7 +51,7 @@ static void imprimirLista(const vector<Jogo>& v) {
     cout << "  Total: " << v.size() << " registro(s).\n";
 }
 
-// ------------------------------ operacoes ----------------------------------
+// Operações do Menu
 
 static void opInserir(GerenciadorJogos& g) {
     cout << "\n--- Inserir novo jogo ---\n";
@@ -131,7 +126,7 @@ static void opAtualizar(GerenciadorJogos& g) {
 }
 
 
-// -------------------------------- menu -------------------------------------
+// Menu
 
 static void menu() {
     cout << "\n==================== SGBD de Jogos ====================\n";

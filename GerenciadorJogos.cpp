@@ -2,7 +2,6 @@
 #include <cstring>
 #include <cstdio>
 
-// Nomes dos arquivos do sistema (todos persistidos em disco)
 static const char* ARQ_DADOS      = "jogos.dat";
 static const char* ARQ_BTREE      = "btree.dat";
 static const char* ARQ_GEN_IDX    = "genero.idx";
@@ -39,7 +38,7 @@ GerenciadorJogos::GerenciadorJogos()
     fclose(f);
 }
 
-// --------------------------- acesso a jogos.dat ----------------------------
+// ACESSO A jogos.dat
 
 CabecalhoDados GerenciadorJogos::lerCabecalho() {
     FILE* f = abrirOuCriarDados(arqDados);
@@ -73,7 +72,7 @@ Jogo GerenciadorJogos::lerRegistro(int rrn) {
     return j;
 }
 
-// ------------------------------- INSERIR -----------------------------------
+// INSERIR
 
 int GerenciadorJogos::inserir(const std::string& titulo,
                               const std::string& desenvolvedora, int ano,
@@ -114,7 +113,7 @@ int GerenciadorJogos::inserir(const std::string& titulo,
     return j.id;
 }
 
-// ------------------------------- REMOVER -----------------------------------
+// REMOVER
 
 // Remocao LOGICA: o registro nao e apagado fisicamente do jogos.dat; ele e
 // apenas marcado como removido (id = ID_REMOVIDO) e seu RRN e catalogado na
@@ -143,7 +142,7 @@ bool GerenciadorJogos::remover(int id) {
     return true;
 }
 
-// Buscar
+// BUSCAR
 
 bool GerenciadorJogos::buscarPorId(int id, Jogo& saida) {
     int rrn = btree.buscar(id);
@@ -183,7 +182,7 @@ std::vector<Jogo> GerenciadorJogos::buscarPorPlataforma(const std::string& plata
     return resultado;
 }
 
-// Listagem
+// LISTAR
 
 std::vector<std::string> GerenciadorJogos::generosIndexados() {
     return idxGenero.listarChaves();
@@ -193,18 +192,21 @@ std::vector<std::string> GerenciadorJogos::plataformasIndexadas() {
     return idxPlataforma.listarChaves();
 }
 
-// Atualizar
+// ATUALIZAR
 
-bool GerenciadorJogos::atualizar(int id, const std::string& titulo, const std::string& desenvolvedora, int ano, float nota, const std::string& genero, const std::string& plataforma) {
+bool GerenciadorJogos::atualizar(int id, const std::string& titulo, const std::string& desenvolvedora, 
+    int ano, float nota, const std::string& genero, const std::string& plataforma) {
+    // Localiza o registro pelo indice primario
     int rrn = btree.buscar(id);
     if (rrn == -1) 
         return false;
 
+    // Le o registro atual
     Jogo antigo = lerRegistro(rrn);
-    if (antigo.id == ID_REMOVIDO) 
+    if (antigo.id == ID_REMOVIDO)
         return false;
 
-    // Se a chave secundaria mudou, mantem os indices consistentes:
+    // Caso alguma chave secundaria tenha sido alterada, atualiza os respectivos indices invertidos.
     if (strncmp(antigo.genero, genero.c_str(), TAM_GENERO) != 0) {
         idxGenero.remover(std::string(antigo.genero), id);
         idxGenero.inserir(genero, id);
@@ -214,6 +216,7 @@ bool GerenciadorJogos::atualizar(int id, const std::string& titulo, const std::s
         idxPlataforma.inserir(plataforma, id);
     }
 
+    // Monta o novo registro com os dados atualizados.
     Jogo novo;
     memset(&novo, 0, sizeof(Jogo));
     novo.id = id;
@@ -224,6 +227,7 @@ bool GerenciadorJogos::atualizar(int id, const std::string& titulo, const std::s
     copiarCampo(novo.genero, genero, TAM_GENERO);
     copiarCampo(novo.plataforma, plataforma, TAM_PLATAFORMA);
 
+    // Sobrescreve o registro no mesmo RRN.
     escreverRegistro(rrn, novo);
     return true;
 }

@@ -11,7 +11,7 @@ const int TAM_CHAVE_SEC = 30; // tamanho fixo da chave secundaria (genero/plataf
 
 struct EntradaIdx {
     char chave[TAM_CHAVE_SEC];
-    int  cabeca;   // indice do 1o no da lista invertida no .inv (-1 se vazia)
+    int  cabeca;   // indice do primeiro no da lista invertida no .inv (-1 se vazia)
 };
 
 struct CabecalhoIdx {
@@ -35,14 +35,14 @@ private:
     char arqIdx[256];
     char arqInv[256];
 
-    // --- .idx ---
+    // .IDX
     CabecalhoIdx lerCabIdx();
     void         escreverCabIdx(const CabecalhoIdx& c);
-    int          buscarEntrada(const char* chave, EntradaIdx& saida); // retorna posicao ou -1
+    int          buscarEntrada(const char* chave, EntradaIdx& saida);
     void         escreverEntrada(int pos, const EntradaIdx& e);
-    int          criarEntrada(const char* chave);                     // cria e retorna a posicao
+    int          criarEntrada(const char* chave);
 
-    // --- .inv ---
+    // .INV
     CabecalhoInv lerCabInv();
     void         escreverCabInv(const CabecalhoInv& c);
     void         lerNoInv(int idx, NoInv& no);

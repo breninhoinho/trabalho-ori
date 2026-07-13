@@ -40,11 +40,11 @@ public:
     // nao existe.
     bool remover(int id);
 
-    // Buscas por chave secundaria (lista invertida)
+    // Busca por chave secundaria
     std::vector<Jogo> buscarPorGenero(const std::string& genero);
     std::vector<Jogo> buscarPorPlataforma(const std::string& plataforma);
 
-    //List
+    // Listagem por chave secundária
     std::vector<std::string> generosIndexados();
     std::vector<std::string> plataformasIndexadas();
 };
