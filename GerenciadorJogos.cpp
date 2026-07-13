@@ -155,7 +155,7 @@ bool GerenciadorJogos::buscarPorId(int id, Jogo& saida) {
 
     // Validação caso o registro já tenha sido removido (Tombstone)
     if (saida.id == ID_REMOVIDO) 
-        return false;https://www.youtube.com/watch?v=vmqvPlJvpj4&t=1552s
+        return false;
     
     return true;
 }
