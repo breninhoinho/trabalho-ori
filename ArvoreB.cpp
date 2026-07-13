@@ -20,7 +20,7 @@ ArvoreB::ArvoreB(const char* nome) {
     fclose(f);
 }
 
-// --------------------------- acesso a disco --------------------------------
+// ACESSO AO DISCO
 
 CabecalhoBTree ArvoreB::lerCabecalho() {
     FILE* f = abrirOuCriarB(nomeArquivo);
@@ -56,21 +56,26 @@ void ArvoreB::escreverNo(int idx, const NoBTree& no) {
 // Aloca um no: reaproveita um no livre (se houver) ou cria um novo no fim.
 int ArvoreB::alocarNo() {
     CabecalhoBTree c = lerCabecalho();
+    
+    // Se existir um no livre, reutiliza ele e atualiza a cabeca da lista
+    // de nos livres para o proximo elemento.
     int idx;
-    if (c.livre != -1) {            // ha no livre -> reusa (lista de nos livres)
+    if (c.livre != -1) {
         idx = c.livre;
         NoBTree no;
         lerNo(idx, no);
-        c.livre = no.prox;          // proximo livre vira a nova cabeca
-    } else {
-        idx = c.numNos;             // cresce o arquivo
+        c.livre = no.prox;
+    } 
+    // Caso contrario, aloca um novo no ao final do arquivo.
+    else {    
+        idx = c.numNos;
         c.numNos++;
     }
     escreverCabecalho(c);
     return idx;
 }
 
-// ----------------------------- INSERCAO ------------------------------------
+// INSERCAO
 
 void ArvoreB::inserir(int chave, int rrn) {
     CabecalhoBTree c = lerCabecalho();
@@ -183,7 +188,7 @@ void ArvoreB::inserirNaoCheio(int idx, int chave, int rrn) {
     }
 }
 
-// ----------------------------- REMOCAO --------------------------------------
+// REMOCAO
 
 // Devolve o no 'idx' para a lista de nos livres do arquivo (o alocarNo vai
 // reaproveitar esse espaco em insercoes futuras, evitando fragmentacao).
@@ -231,11 +236,13 @@ void ArvoreB::removerDe(int idx, int chave, int& rrnRemovido, bool& achou) {
     int i = 0;
     while (i < x.n && chave > x.chaves[i]) i++;
 
-    if (i < x.n && x.chaves[i] == chave) {   // a chave esta neste no
+    // Verifica se a chave está nesse no
+    if (i < x.n && x.chaves[i] == chave) {
         achou = true;
-        rrnRemovido = x.dados[i];            // captura o RRN antes de remover
+        // Salva o RRN antes de deletar
+        rrnRemovido = x.dados[i];
         if (x.folha) {
-            // caso simples: desloca as chaves seguintes para a esquerda
+            // Caso simples: desloca as chaves seguintes para a esquerda
             for (int j = i; j < x.n - 1; j++) {
                 x.chaves[j] = x.chaves[j + 1];
                 x.dados[j]  = x.dados[j + 1];
@@ -248,18 +255,24 @@ void ArvoreB::removerDe(int idx, int chave, int& rrnRemovido, bool& achou) {
         return;
     }
 
-    if (x.folha) return;   // chegou na folha e nao achou: chave nao existe
+   // Se chegou na folha e nao achou, significa que a chave nao existe
+    if (x.folha) 
+        return;
 
-    bool eraUltimo = (i == x.n);   // a chave estaria na subarvore mais a direita
+    // A chave estaria na subarvore mais a direita
+    bool eraUltimo = (i == x.n);
     NoBTree filho;
     lerNo(x.filhos[i], filho);
-    if (filho.n < T) {             // filho no minimo (T-1): reforca antes de descer
+    if (filho.n < T) {             
         preencherFilho(idx, i);
-        lerNo(idx, x);             // o no pode ter mudado (emprestimo ou fusao)
+        lerNo(idx, x);
     }
+
     // Se houve fusao do ultimo filho, ele agora esta na posicao i-1
-    if (eraUltimo && i > x.n) removerDe(x.filhos[i - 1], chave, rrnRemovido, achou);
-    else                      removerDe(x.filhos[i],     chave, rrnRemovido, achou);
+    if (eraUltimo && i > x.n) 
+        removerDe(x.filhos[i - 1], chave, rrnRemovido, achou);
+    else                      
+        removerDe(x.filhos[i],     chave, rrnRemovido, achou);
 }
 
 // Remove a chave na posicao i de um no INTERNO 'x' (ja carregado em memoria).
@@ -270,7 +283,7 @@ void ArvoreB::removerDeInterno(int idx, NoBTree& x, int i) {
     lerNo(x.filhos[i],     esq);
     lerNo(x.filhos[i + 1], dir);
 
-    // O RRN da chave original ja foi capturado pelo chamador; as remocoes
+    // O RRN da chave original ja foi capturado pelo chamador, as remocoes
     // recursivas abaixo (da substituta) usam variaveis descartaveis.
     int  rrnDescarte  = -1;
     bool achouDescarte = false;
@@ -307,6 +320,7 @@ void ArvoreB::maiorDaSubarvore(int idx, int& chave, int& rrn) {
     lerNo(idx, no);
     while (!no.folha)
         lerNo(no.filhos[no.n], no);
+
     chave = no.chaves[no.n - 1];
     rrn   = no.dados[no.n - 1];
 }
@@ -317,6 +331,7 @@ void ArvoreB::menorDaSubarvore(int idx, int& chave, int& rrn) {
     lerNo(idx, no);
     while (!no.folha)
         lerNo(no.filhos[0], no);
+
     chave = no.chaves[0];
     rrn   = no.dados[0];
 }
@@ -331,15 +346,25 @@ void ArvoreB::preencherFilho(int idx, int i) {
     if (i != 0) {
         NoBTree ant;
         lerNo(x.filhos[i - 1], ant);
-        if (ant.n >= T) { emprestarDoAnterior(idx, i); return; }
+        if (ant.n >= T) { 
+            emprestarDoAnterior(idx, i); 
+            return; 
+        }
     }
     if (i != x.n) {
         NoBTree prox;
         lerNo(x.filhos[i + 1], prox);
-        if (prox.n >= T) { emprestarDoProximo(idx, i); return; }
+        if (prox.n >= T) { 
+            emprestarDoProximo(idx, i);
+            return;
+        }
     }
-    if (i != x.n) fundirFilhos(idx, i);       // funde com o irmao da direita
-    else          fundirFilhos(idx, i - 1);   // ultimo filho: funde com o da esquerda
+    if (i != x.n) 
+        // Funde com o irmao da direita
+        fundirFilhos(idx, i);       
+    else          
+        fundirFilhos(idx, i - 1);   
+        // Ultimo filho: funde com o da esquerda
 }
 
 // Rotacao pela esquerda: a chave separadora do pai desce para o filho i e a
@@ -358,6 +383,7 @@ void ArvoreB::emprestarDoAnterior(int idx, int i) {
     if (!filho.folha) {
         for (int j = filho.n; j >= 0; j--)
             filho.filhos[j + 1] = filho.filhos[j];
+
         filho.filhos[0] = irmao.filhos[irmao.n];  // ultimo filho do irmao migra
     }
 
@@ -382,12 +408,12 @@ void ArvoreB::emprestarDoProximo(int idx, int i) {
     lerNo(x.filhos[i],     filho);
     lerNo(x.filhos[i + 1], irmao);
 
-    filho.chaves[filho.n] = x.chaves[i];  // separadora do pai desce
+    filho.chaves[filho.n] = x.chaves[i];
     filho.dados[filho.n]  = x.dados[i];
     if (!filho.folha)
-        filho.filhos[filho.n + 1] = irmao.filhos[0];  // primeiro filho do irmao migra
+        filho.filhos[filho.n + 1] = irmao.filhos[0];
 
-    x.chaves[i] = irmao.chaves[0];        // menor do irmao sobe
+    x.chaves[i] = irmao.chaves[0];
     x.dados[i]  = irmao.dados[0];
 
     // fecha o buraco no inicio do irmao
@@ -423,7 +449,7 @@ void ArvoreB::fundirFilhos(int idx, int i) {
     filho.chaves[T - 1] = x.chaves[i];
     filho.dados[T - 1]  = x.dados[i];
 
-    // copia as chaves e filhos do irmao para a metade direita
+    // Copia as chaves e filhos do irmao para a metade direita
     for (int j = 0; j < irmao.n; j++) {
         filho.chaves[j + T] = irmao.chaves[j];
         filho.dados[j + T]  = irmao.dados[j];
@@ -434,7 +460,7 @@ void ArvoreB::fundirFilhos(int idx, int i) {
     }
     filho.n += irmao.n + 1;
 
-    // fecha o buraco no pai (remove a separadora e o ponteiro para o irmao)
+    // Fecha o buraco no pai (remove a separadora e o ponteiro para o irmao)
     for (int j = i; j < x.n - 1; j++) {
         x.chaves[j] = x.chaves[j + 1];
         x.dados[j]  = x.dados[j + 1];
@@ -448,7 +474,7 @@ void ArvoreB::fundirFilhos(int idx, int i) {
     liberarNo(irmaoIdx);
 }
 
-// Buscar
+// BUSCA
 
 // Retorna o RNN ou -1, caso não exista
 int ArvoreB::buscar(int chave) {
@@ -474,7 +500,7 @@ int ArvoreB::buscar(int chave) {
     return -1;
 }
 
-// Atualizar
+// ATUALIZACAO
 
 bool ArvoreB::atualizar(int chave, int rrn) {
     CabecalhoBTree c = lerCabecalho();
